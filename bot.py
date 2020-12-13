@@ -84,11 +84,10 @@ def stopgame():
     board = None
 
 @bot.command(name='resend')
-async def resendBoard(ctx, dontclearprev):
+async def resendBoard(ctx):
     global board
     if not board == None:
-        if not bool(dontclearprev):
-            await board.delete()
+        await board.delete()
         board = await ctx.send(c4.getboard())
         for x in range(1,8):
             await board.add_reaction(f'{x}\uFE0F\u20E3')
