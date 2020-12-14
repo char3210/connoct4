@@ -6,7 +6,7 @@ yellow = '<:yellow:588903561149153280>'
 currentPiece = red
 height = 6
 width = 7
-cols=[[blank]*height]*width
+cols = [[blank]*height for i in range(width)]
 
 def place(col):
     i = width-1
