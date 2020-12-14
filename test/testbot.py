@@ -33,7 +33,10 @@ async def on_reaction_add(reaction, user):
         return
     
     game = getgame(reaction.message)
-    game.checkuser(user)
+    if(not game.checkuser(user)):
+        reaction.message.channel.send("You are not in this game!")
+        return
+    
     
     if (reaction.message==board)==False:
         return
