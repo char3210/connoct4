@@ -27,6 +27,9 @@ def togglePiece():
 
 def getboard():
     res = f'Turn: {currentPiece}\n \n'
+    for x in range(1,8):
+        res += f'{x}\uFE0F\u20E3'
+    res +='\n'
     for i in range(height):
         for j in range(width):
             res += cols[j][i]

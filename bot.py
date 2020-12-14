@@ -12,6 +12,7 @@ bot = commands.Bot(command_prefix='c!')
 
 p1=p2=None
 nums = ['1\uFE0F\u20E3']
+board = None
 
 @bot.event
 async def on_ready():
@@ -24,7 +25,6 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
 
-    global board
     if (reaction.message==board)==False:
         return
     
@@ -86,9 +86,17 @@ def stopgame():
 @bot.command(name='resend')
 async def resendBoard(ctx):
     global board
-    await board.delete()
-    board = await ctx.send(c4.getboard())
-    for x in range(1,8):
-        await board.add_reaction(f'{x}\uFE0F\u20E3')
+    if not board == None:
+        await board.delete()
+        board = await ctx.send(c4.getboard())
+        for x in range(1,8):
+            await board.add_reaction(f'{x}\uFE0F\u20E3')
+    else:
+        await ctx.send('no ongoing game rn')
+
+@bot.command(name='animoji')
+async def animoji(ctx):
+    print(ctx.message.guild.emojis)
+    await ctx.send('<a:yred:787220892853731348>')
     
 bot.run(TOKEN)
