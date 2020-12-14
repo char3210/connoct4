@@ -89,9 +89,34 @@ class discordgame(c4game):
         self.board = None 
 
     def checkuser(self, user):
-        pass
-    
-        
+        if user==self.p1:
+            return 1
+        elif user==self.p2:
+            return 2
+        else:
+            return False
+
+    async def clear(self):
+        super().clear()
+        self.p1 = None
+        self.p2 = None
+        try:
+            await board.delete()
+        except:
+            pass
+        self.board = None
+
+    async def resend(self):
+        tb = await self.board.channel.send(self.getboard())
+        try:
+            await self.board.delete()
+        except:
+            pass
+        self.board = tb
+        for x in range(1,8):
+            await self.board.add_reaction(f'{x}\uFE0F\u20E3')
+        await self.board.add_reaction('\u23F9\uFE0F')
+        await self.board.add_reaction('\U0001F501')
         
     
     
