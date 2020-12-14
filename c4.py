@@ -59,8 +59,8 @@ def checkwin(char):
         for j in range(width-3):
             if ( (cols[j][i]==char and cols[j+1][i+1]==char and
                   cols[j+2][i+2]==char and cols[j+3][i+3]==char) or
-                 (cols[len(cols)-j-1][i]==char and cols[len(cols)-j-2][i+1]==char and
-                  cols[len(cols)-j-3][i+2]==char and cols[len(cols)-j-4][i+3]==char) ):
+                 (cols[-j-1][i]==char and cols[-j-2][i+1]==char and
+                  cols[-j-3][i+2]==char and cols[-j-4][i+3]==char) ):
                 return True
 
 def checkdraw():
