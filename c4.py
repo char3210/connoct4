@@ -9,7 +9,7 @@ width = 7
 cols = [[blank]*height for i in range(width)]
 
 def place(col):
-    i = width-1
+    i = height-1
     while i>=0:
         if col[i]==blank:
             col[i]=currentPiece
@@ -75,7 +75,7 @@ def checkdraw():
 def clear():
     global cols, currentPiece
     for col in cols:
-        for p in range(width):
+        for p in range(height):
             col[p]=blank
     
     currentPiece = red

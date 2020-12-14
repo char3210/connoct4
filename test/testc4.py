@@ -7,6 +7,7 @@ class c4game:
 
     def __init__(self):
         self.currentPiece = red
+        """
         self.c1=[blank]*6
         self.c2=[blank]*6
         self.c3=[blank]*6
@@ -15,7 +16,11 @@ class c4game:
         self.c6=[blank]*6
         self.c7=[blank]*6
         self.cols=[self.c1,self.c2,self.c3,self.c4,self.c5,self.c6,self.c7]
-
+        """
+        height=6
+        width=7
+        self.cols=[[blank]*height]*width
+        
     def place(self, col):
         i = len(col)-1
         while i>=0:
@@ -93,9 +98,11 @@ class discordgame(c4game):
         self.gameid=gameid
         self.p1 = None
         self.p2 = None
-        self.board = None
+        self.board = None 
 
     def checkuser(self, user):
+        pass
+    
         
         
     
