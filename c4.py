@@ -6,10 +6,12 @@ yellow = '<:yellow:588903561149153280>'
 currentPiece = red
 height = 6
 width = 7
-cols=[[blank]*height]*width
+cols=[]
+for i in range(width):
+    cols.append([blank]*height)
 
 def place(col):
-    i = width-1
+    i = height-1
     while i>=0:
         if col[i]==blank:
             col[i]=currentPiece
@@ -75,7 +77,7 @@ def checkdraw():
 def clear():
     global cols, currentPiece
     for col in cols:
-        for p in range(width):
+        for p in range(height):
             col[p]=blank
     
     currentPiece = red
