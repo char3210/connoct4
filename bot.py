@@ -33,9 +33,10 @@ async def on_reaction_add(reaction, user):
         return
     
     chosen = None
-    try:
+    #try:
+    if True:
         chosen = int(reaction.emoji[0])-1
-        if (not (chosen in range(1,8))):
+        if (not (chosen in range(0,7))):
             return
         
         if game.p1==None:
@@ -47,6 +48,7 @@ async def on_reaction_add(reaction, user):
     
         if(not bool(game.checkuser(user))):
             await reaction.message.channel.send("You are not in this game!")
+            await reaction.remove(user)
             return
         else:
             if (user == game.p1 and game.currentPiece == c4.red) or (user==game.p2 and game.currentPiece == c4.yellow):
@@ -65,7 +67,7 @@ async def on_reaction_add(reaction, user):
         elif game.checkdraw():
             await reaction.message.channel.send("the game has drawn!")
             await stopgame(game)
-    
+    """
     except:
         if reaction.emoji == '⏹️':
             await stopgame(game)
@@ -74,7 +76,7 @@ async def on_reaction_add(reaction, user):
             await game.resend()
         else:
             return
-
+    """
     try:
         await reaction.remove(user)
     except:

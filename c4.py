@@ -96,6 +96,21 @@ class discordgame(c4game):
         else:
             return False
 
+    def getboard(self):
+        res = ''
+        try:
+            res += f'Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})\n \n'
+        except:
+            res += f'Turn: {self.currentPiece}\n \n'
+        for x in range(1,8):
+            res += f'{x}\uFE0F\u20E3'
+        res +='\n'
+        for i in range(height):
+            for j in range(width):
+                res += self.cols[j][i]
+            res += '\n'
+        return res
+
     async def clear(self):
         super().clear()
         self.p1 = None
