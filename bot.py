@@ -33,8 +33,7 @@ async def on_reaction_add(reaction, user):
         return
     
     chosen = None
-    #try:
-    if True:
+    try:
         chosen = int(reaction.emoji[0])-1
         if (not (chosen in range(0,7))):
             return
@@ -67,7 +66,7 @@ async def on_reaction_add(reaction, user):
         elif game.checkdraw():
             await reaction.message.channel.send("the game has drawn!")
             await stopgame(game)
-    """
+    
     except:
         if reaction.emoji == '⏹️':
             await stopgame(game)
@@ -76,7 +75,7 @@ async def on_reaction_add(reaction, user):
             await game.resend()
         else:
             return
-    """
+    
     try:
         await reaction.remove(user)
     except:
