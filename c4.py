@@ -6,7 +6,7 @@ yellow = '<:yellow:588903561149153280>'
 currentPiece = red
 height = 6
 width = 7
-cols=[[blank]*height for i in range(width)]
+cols = [[blank]*height for i in range(width)]
 
 def place(col):
     for i in range(height-1,0,-1):
@@ -57,8 +57,8 @@ def checkwin(char):
         for j in range(width-3):
             if ( (cols[j][i]==char and cols[j+1][i+1]==char and
                   cols[j+2][i+2]==char and cols[j+3][i+3]==char) or
-                 (cols[len(cols)-j-1][i]==char and cols[len(cols)-j-2][i+1]==char and
-                  cols[len(cols)-j-3][i+2]==char and cols[len(cols)-j-4][i+3]==char) ):
+                 (cols[-j-1][i]==char and cols[-j-2][i+1]==char and
+                  cols[-j-3][i+2]==char and cols[-j-4][i+3]==char) ):
                 return True
 
 def checkdraw():
