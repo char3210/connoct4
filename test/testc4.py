@@ -59,8 +59,8 @@ class c4game:
             for j in range(width-3):
                 if ( (self.cols[j][i]==char and self.cols[j+1][i+1]==char and
                       self.cols[j+2][i+2]==char and self.cols[j+3][i+3]==char) or
-                     (self.cols[len(self.cols)-j-1][i]==char and self.cols[len(self.cols)-j-2][i+1]==char and
-                      self.cols[len(self.cols)-j-3][i+2]==char and self.cols[len(self.cols)-j-4][i+3]==char) ):
+                     (self.cols[-j-1][i]==char and self.cols[-j-2][i+1]==char and
+                      self.cols[-j-3][i+2]==char and self.cols[-j-4][i+3]==char) ):
                     return True
 
     def checkdraw(self):
