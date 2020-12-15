@@ -12,7 +12,7 @@ class c4game:
         self.cols=[[blank]*height for i in range(width)]
         
     def place(self, col):
-        for i in range(height-1,0,-1):
+        for i in range(height-1,-1,-1):
             if col[i]==blank:
                 col[i]=self.currentPiece
                 self.togglePiece()
