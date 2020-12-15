@@ -4,7 +4,7 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 
-import testc4
+import c4
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -40,26 +40,26 @@ async def on_reaction_add(reaction, user):
         
         if game.p1==None:
             game.p1=user
-            await reaction.message.channel.send(f"Player 1 has joined: {user.name} ({testc4.red})")
+            await reaction.message.channel.send(f"Player 1 has joined: {user.name} ({c4.red})")
         elif game.p2==None:
             game.p2=user
-            await reaction.message.channel.send(f"Player 2 has joined: {user.name} ({testc4.yellow})")
+            await reaction.message.channel.send(f"Player 2 has joined: {user.name} ({c4.yellow})")
     
         if(not bool(game.checkuser(user))):
             await reaction.message.channel.send("You are not in this game!")
             return
         else:
-            if (user == game.p1 and game.currentPiece == testc4.red) or (user==game.p2 and game.currentPiece == testc4.yellow):
+            if (user == game.p1 and game.currentPiece == c4.red) or (user==game.p2 and game.currentPiece == c4.yellow):
                 if not game.place(game.cols[chosen]):
                         await reaction.message.channel.send("invalid move, next to go is still "+game.currentPiece)
             else :
                 await reaction.message.channel.send("It is not your turn!")
 
         await game.board.edit(content = game.getboard())
-        if game.checkwin(testc4.red):
+        if game.checkwin(c4.red):
             await reaction.message.channel.send(f"red ({game.p1.name}) wins!")
             await stopgame(game)
-        elif game.checkwin(testc4.yellow):
+        elif game.checkwin(c4.yellow):
             await reaction.message.channel.send(f"yellow ({game.p2.name}) wins!")
             await stopgame(game)
         elif game.checkdraw():
@@ -83,7 +83,7 @@ async def on_reaction_add(reaction, user):
 @bot.command(name='start')
 async def start(ctx):
     global games
-    game = testc4.discordgame(len(games))
+    game = c4.discordgame(len(games))
     games.append(game)
     game.board = await ctx.send(game.getboard())
     for x in range(1,8):
