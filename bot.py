@@ -25,6 +25,8 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
 
+    print(reaction.emoji)
+    
     if (reaction.message==board)==False:
         return
     

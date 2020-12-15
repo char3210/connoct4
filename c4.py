@@ -9,13 +9,11 @@ width = 7
 cols = [[blank]*height for i in range(width)]
 
 def place(col):
-    i = height-1
-    while i>=0:
+    for i in range(height-1,0,-1):
         if col[i]==blank:
             col[i]=currentPiece
             togglePiece()
             return True
-        i=i-1
     return False
 
 def togglePiece():

@@ -10,11 +10,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='c!')
 
-p1=p2=None
-board = None
 games=[]
-newid=0
-game = testc4.c4game()
 
 @bot.event
 async def on_ready():
@@ -33,80 +29,73 @@ async def on_reaction_add(reaction, user):
         return
     
     game = getgame(reaction.message)
-    game.checkuser(user)
-    
-    if (reaction.message==board)==False:
+    if(game == None):
         return
     
-    global p1, p2
-    if p1==None:
-        p1=user
-        await reaction.message.channel.send(f"Player 1 has joined: {user.name} ({testc4.red})")
-    elif p2==None:
-        p2=user
-        await reaction.message.channel.send(f"Player 2 has joined: {user.name} ({testc4.yellow})")
-
-    
+    chosen = None
     try:
         chosen = int(reaction.emoji[0])-1
+        if (not (chosen in range(1,8))):
+            return
+        
+        if game.p1==None:
+            game.p1=user
+            await reaction.message.channel.send(f"Player 1 has joined: {user.name} ({testc4.red})")
+        elif game.p2==None:
+            game.p2=user
+            await reaction.message.channel.send(f"Player 2 has joined: {user.name} ({testc4.yellow})")
+    
+        if(not bool(game.checkuser(user))):
+            await reaction.message.channel.send("You are not in this game!")
+            return
+        else:
+            if (user == game.p1 and game.currentPiece == testc4.red) or (user==game.p2 and game.currentPiece == testc4.yellow):
+                if not game.place(game.cols[chosen]):
+                        await reaction.message.channel.send("invalid move, next to go is still "+game.currentPiece)
+            else :
+                await reaction.message.channel.send("It is not your turn!")
+
+        await game.board.edit(content = game.getboard())
+        if game.checkwin(testc4.red):
+            await reaction.message.channel.send(f"red ({game.p1.name}) wins!")
+            await stopgame(game)
+        elif game.checkwin(testc4.yellow):
+            await reaction.message.channel.send(f"yellow ({game.p2.name}) wins!")
+            await stopgame(game)
+        elif game.checkdraw():
+            await reaction.message.channel.send("the game has drawn!")
+            await stopgame(game)
+    
     except:
-        return
+        if reaction.emoji == '⏹️':
+            await stopgame(game)
+            await reaction.message.channel.send('game has been stopped')
+        elif reaction.emoji == '🔁':
+            await game.resend()
+        else:
+            return
 
-    if (user == p1 and game.currentPiece == testc4.red) or (user==p2 and game.currentPiece == testc4.yellow):
-        if not game.place(game.cols[chosen]):
-                await reaction.message.channel.send("invalid move, next to go is still "+game.currentPiece)
-    else :
-        await reaction.message.channel.send("It is not your turn!")
-
-    
-    await reaction.remove(user)
-    await board.edit(content = game.getboard())
-    
-    if game.checkwin('<:red:588903539926106112>'):
-        await reaction.message.channel.send(f"red ({p1.name}) wins!")
-        stopgame()
-    elif game.checkwin('<:yellow:588903561149153280>'):
-        await reaction.message.channel.send(f"yellow ({p2.name}) wins!")
-        stopgame()
-    elif game.checkdraw():
-        await reaction.message.channel.send("the game has drawn!")
-        stopgame()
-    
+    try:
+        await reaction.remove(user)
+    except:
+        pass
 
 @bot.command(name='start')
 async def start(ctx):
     global games
-    game = discordgame(len(games))
+    game = testc4.discordgame(len(games))
     games.append(game)
     game.board = await ctx.send(game.getboard())
     for x in range(1,8):
         await game.board.add_reaction(f'{x}\uFE0F\u20E3')
+    await game.board.add_reaction('\u23F9\uFE0F')
+    await game.board.add_reaction('\U0001F501')
 
-@bot.command(name='stop')
-async def stopcmd(ctx):
-    stopgame()
-    await ctx.send('game has been stopped')
+async def stopgame(game):
+    await game.clear()
 
-def stopgame():
-    global p1, p2, board
-    game.clear()
-    p1=None
-    p2=None
-    board = None
-
-@bot.command(name='resend')
-async def resendBoard(ctx):
-    global board
-    if not board == None:
-        try:
-            await board.delete()
-        except:
-            pass
-        board = await ctx.send(game.getboard())
-        for x in range(1,8):
-            await board.add_reaction(f'{x}\uFE0F\u20E3')
-    else:
-        await ctx.send('no ongoing game rn')
+async def resend(game):
+    await game.resend()
 
 @bot.command(name='animoji')
 async def animoji(ctx):
