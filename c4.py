@@ -86,7 +86,8 @@ class discordgame(c4game):
         self.gameid=gameid
         self.p1 = None
         self.p2 = None
-        self.board = None 
+        self.board = None
+        self.game = ''
 
     def checkuser(self, user):
         if user==self.p1:
@@ -99,9 +100,10 @@ class discordgame(c4game):
     def getboard(self):
         res = ''
         try:
-            res += f'Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})\n \n'
+            res += f"""Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})
+            gameid: {self.gameid}\n \n"""
         except:
-            res += f'Turn: {self.currentPiece}\n \n'
+            res += f'Turn: {self.currentPiece}\ngameid: {self.gameid}\n \n'
         for x in range(1,8):
             res += f'{x}\uFE0F\u20E3'
         res +='\n'
@@ -120,6 +122,10 @@ class discordgame(c4game):
         except:
             pass
         self.board = None
+
+    def place(self, col):
+        self.game += str(col)
+        return super().place(self.cols[col])
 
     async def resend(self):
         tb = await self.board.channel.send(self.getboard())
