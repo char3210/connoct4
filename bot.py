@@ -15,6 +15,13 @@ games=[]
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected')
+    try:
+        f = open('games.txt')
+    except:
+        f = open('games.txt', 'w')
+    global newid
+    newid = len(f.readlines())
+    f.close()
 
 def getgame(board):
     for g in range(len(games)):
@@ -60,15 +67,15 @@ async def on_reaction_add(reaction, user):
         if game.checkwin(c4.red):
             await reaction.message.channel.send(f"red ({game.p1.name}) wins!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: {game.game}')
+            await reaction.message.channel.send(f'Game: ``{game.game}``')
         elif game.checkwin(c4.yellow):
             await reaction.message.channel.send(f"yellow ({game.p2.name}) wins!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: {game.game}')
+            await reaction.message.channel.send(f'Game: ``{game.game}``')
         elif game.checkdraw():
             await reaction.message.channel.send("the game has drawn!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: {game.game}')
+            await reaction.message.channel.send(f'Game: ``{game.game}``')
     
     except:
         if reaction.emoji == '⏹️':
@@ -86,8 +93,9 @@ async def on_reaction_add(reaction, user):
 
 @bot.command(name='start')
 async def start(ctx):
-    global games
-    game = c4.discordgame(len(games))
+    global games, newid
+    game = c4.discordgame(newid)
+    newid+=1
     games.append(game)
     game.board = await ctx.send(game.getboard())
     for x in range(1,8):

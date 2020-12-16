@@ -1,3 +1,4 @@
+import os
 
 blank = '<:black:588903518912380939>'
 red = '<:red:588903539926106112>'
@@ -101,7 +102,7 @@ class discordgame(c4game):
         res = ''
         try:
             res += f"""Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})
-            gameid: {self.gameid}\n \n"""
+gameid: {self.gameid}\n \n"""
         except:
             res += f'Turn: {self.currentPiece}\ngameid: {self.gameid}\n \n'
         for x in range(1,8):
@@ -115,13 +116,20 @@ class discordgame(c4game):
 
     async def clear(self):
         super().clear()
-        self.p1 = None
-        self.p2 = None
         try:
             await board.delete()
         except:
             pass
         self.board = None
+        f = open('games.txt','a')
+        try:
+            f.write(f'{self.gameid} {self.p1.name} {self.p2.name} {self.game} \n')
+        except:
+            f.write(f'{self.gameid} stopped')
+        f.close()
+        self.p1 = None
+        self.p2 = None
+        f.close()
 
     def place(self, col):
         self.game += str(col)
