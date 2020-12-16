@@ -67,15 +67,12 @@ async def on_reaction_add(reaction, user):
         if game.checkwin(c4.red):
             await reaction.message.channel.send(f"red ({game.p1.name}) wins!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: ``{game.game}``')
         elif game.checkwin(c4.yellow):
             await reaction.message.channel.send(f"yellow ({game.p2.name}) wins!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: ``{game.game}``')
         elif game.checkdraw():
             await reaction.message.channel.send("the game has drawn!")
             await stopgame(game)
-            await reaction.message.channel.send(f'Game: ``{game.game}``')
     
     except:
         if reaction.emoji == '⏹️':
