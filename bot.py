@@ -1,4 +1,5 @@
 import os
+import tracemalloc
 import discord
 
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from discord.ext import commands
 
 import c4
 
+tracemalloc.start()
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='c!')
@@ -23,7 +25,7 @@ async def on_ready():
     newid = len(f.readlines())
     f.close()
 
-def getgame(board):
+def getboard(board):
     for g in range(len(games)):
         if board == games[g].board:
             return games[g]
@@ -35,7 +37,7 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
     
-    game = getgame(reaction.message)
+    game = getboard(reaction.message)
     if(game == None):
         return
     
@@ -110,5 +112,25 @@ async def resend(game):
 async def animoji(ctx):
     print(ctx.message.guild.emojis)
     await ctx.send('<a:yred:787220892853731348>')
+
+@bot.command(name='getgame')
+async def getgame(ctx, *args):
+    f = open('games.txt')
+    try:
+        getid = int(args[0])
+    except:
+        getid = len(f.readlines())-1
+        f.seek(0)
+    for line in f.readlines():
+        for i in range(len(line)):
+            if line[i]==' ':
+                if int(line[0:i]) == getid:
+                    await ctx.send(line)
+                    f.close()
+                    return
+                else:
+                    break
+    await ctx.send('no game found')
+    f.close()
     
 bot.run(TOKEN)

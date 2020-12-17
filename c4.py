@@ -121,9 +121,9 @@ gameid: {self.gameid}\n \n"""
         self.board = None
         f = open('games.txt','a')
         try:
-            f.write(f'{self.gameid} {self.p1.name} {self.p2.name} {self.game} \n')
+            f.write(f'{self.gameid} {self.p1.name} {self.p2.name} {self.game}\n')
         except:
-            f.write(f'{self.gameid} stopped')
+            f.write(f'{self.gameid} stopped\n')
         f.close()
         self.p1 = None
         self.p2 = None
