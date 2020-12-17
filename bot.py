@@ -1,10 +1,10 @@
 import os
 import tracemalloc
 import discord
-import time
+import asyncio
 
 from dotenv import load_dotenv
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 import c4
 
@@ -168,7 +168,7 @@ async def replay(ctx, *args):
                     replay.board = await ctx.send(replay.getboard())
                     
                     for x in range(len(moves)):
-                        time.sleep(2)
+                        await asyncio.sleep(2)
                         replay.place(int(moves[x]))
                         await replay.board.edit(content=replay.getboard())
                     f.close()
