@@ -90,7 +90,7 @@ async def on_reaction_add(reaction, user):
     except:
         pass
 
-@bot.command(name='start')
+@bot.command(name='start', brief='Starts a new game',help='Starts a new game in the channel the command was sent.')
 async def start(ctx):
     global games, newid
     game = c4.discordgame(newid)
@@ -108,12 +108,11 @@ async def stopgame(game):
 async def resend(game):
     await game.resend()
 
-@bot.command(name='animoji')
+@bot.command(name='animoji', brief='Sends an animated emoji',help='Sends an animated emoji that flashes between a red and yellow piece.')
 async def animoji(ctx):
-    print(ctx.message.guild.emojis)
     await ctx.send('<a:yred:787220892853731348>')
 
-@bot.command(name='getgame')
+@bot.command(name='getgame', brief='Gets a played game',help='Retrieves and sends a previously played game by the gameid. If no gameid is given, the last ended game is retrieved.')
 async def getgame(ctx, *args):
     f = open('games.txt')
     try:
@@ -132,5 +131,9 @@ async def getgame(ctx, *args):
                     break
     await ctx.send('no game found')
     f.close()
-    
+
+@bot.command(name='replay', brief='Replays a game (WIP)',help='Replays a game through a board by the gameid. If no gameid is given, the last ended game is replayed. (WIP)')
+async def replay(ctx, *args):
+    pass
+
 bot.run(TOKEN)
