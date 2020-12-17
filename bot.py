@@ -1,6 +1,7 @@
 import os
 import tracemalloc
 import discord
+import time
 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -90,7 +91,9 @@ async def on_reaction_add(reaction, user):
     except:
         pass
 
-@bot.command(name='start', brief='Starts a new game',help='Starts a new game in the channel the command was sent.')
+@bot.command(name='start',
+             brief='Starts a new game',
+             help='Starts a new game in the channel the command was sent.')
 async def start(ctx):
     global games, newid
     game = c4.discordgame(newid)
@@ -108,11 +111,17 @@ async def stopgame(game):
 async def resend(game):
     await game.resend()
 
-@bot.command(name='animoji', brief='Sends an animated emoji',help='Sends an animated emoji that flashes between a red and yellow piece.')
+@bot.command(name='animoji',
+             brief='Sends an animated emoji',
+             help='Sends an animated emoji that flashes between a red and yellow piece.')
 async def animoji(ctx):
     await ctx.send('<a:yred:787220892853731348>')
 
-@bot.command(name='getgame', brief='Gets a played game',help='Retrieves and sends a previously played game by the gameid. If no gameid is given, the last ended game is retrieved.')
+@bot.command(name='getgame',
+             brief='Gets a played game',
+             help='Retrieves and sends a previously played game by the gameid. If no gameid is given, the last ended game is retrieved.',
+             usage='c!getgame (gameid)')
+
 async def getgame(ctx, *args):
     f = open('games.txt')
     try:
@@ -132,8 +141,41 @@ async def getgame(ctx, *args):
     await ctx.send('no game found')
     f.close()
 
-@bot.command(name='replay', brief='Replays a game (WIP)',help='Replays a game through a board by the gameid. If no gameid is given, the last ended game is replayed. (WIP)')
+@bot.command(name='replay',
+             brief='Replays a game (WIP)',
+             help='Replays a game through a board by the gameid. If no gameid is given, the last ended game is replayed. (WIP)',
+             usage='c!getgame (gameid)')
 async def replay(ctx, *args):
-    pass
+    f = open('games.txt')
+    try:
+        getid = int(args[0])
+    except:
+        getid = len(f.readlines())-1
+        f.seek(0)
+    for line in f.readlines():
+        for i in range(len(line)):
+            if line[i]==' ':
+                if int(line[0:i]) == getid:
+                    replay = c4.discordgame(getid)
+                    spaces=[]
+                    for j in range(len(line)):
+                        if line[j]==' ':
+                            spaces.append(j)
+                    replay.p1 = line[spaces[0]+1:spaces[1]]
+                    replay.p2 = line[spaces[1]+1:spaces[2]]
+                    moves = line[spaces[2]+1:len(line)-1]
+
+                    replay.board = await ctx.send(replay.getboard())
+                    
+                    for x in range(len(moves)):
+                        time.sleep(2)
+                        replay.place(int(moves[x]))
+                        await replay.board.edit(content=replay.getboard())
+                    f.close()
+                    return
+                else:
+                    break
+    await ctx.send('no game found')
+    f.close()
 
 bot.run(TOKEN)

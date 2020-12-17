@@ -102,7 +102,11 @@ class discordgame(c4game):
             res += f"""Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})
 gameid: {self.gameid}\n \n"""
         except:
-            res += f'Turn: {self.currentPiece}\ngameid: {self.gameid}\n \n'
+            if not self.p2==None:
+                res += f"""Turn: {(self.p1) if (self.currentPiece == red) else (self.p2)} ({self.currentPiece})
+gameid: {self.gameid}\n \n"""
+            else:
+                res += f'Turn: {self.currentPiece}\ngameid: {self.gameid}\n \n'
         for x in range(1,8):
             res += f'{x}\uFE0F\u20E3'
         res +='\n'
@@ -130,8 +134,10 @@ gameid: {self.gameid}\n \n"""
         f.close()
 
     def place(self, col):
-        self.game += str(col)
-        return super().place(self.cols[col])
+        success = super().place(self.cols[col])
+        if success:
+            self.game += str(col)
+        return success
 
     async def resend(self):
         tb = await self.board.channel.send(self.getboard())
