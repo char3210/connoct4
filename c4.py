@@ -69,44 +69,24 @@ class c4game:
                 return False
         return True
 
-
-
-    def clear(self):
-        for col in self.cols:
-            for p in range(height):
-                col[p]=blank
-        
-        self.currentPiece = red
-
-
 class discordgame(c4game):
     def __init__(self, gameid):
         super().__init__()
-        self.gameid=gameid
+        self.currentPlayer = None
+        self.gameid = gameid
         self.p1 = None
         self.p2 = None
         self.board = None
         self.game = ''
-
-    def checkuser(self, user):
-        if user==self.p1:
-            return 1
-        elif user==self.p2:
-            return 2
-        else:
-            return False
+        self.state = ''
 
     def getboard(self):
         res = ''
         try:
-            res += f"""Turn: {(self.p1.name) if (self.currentPiece == red) else (self.p2.name)} ({self.currentPiece})
-gameid: {self.gameid}\n \n"""
+            res += f'Turn: {self.currentPlayer.name} ({self.currentPiece})\n'
         except:
-            if not self.p2==None:
-                res += f"""Turn: {(self.p1) if (self.currentPiece == red) else (self.p2)} ({self.currentPiece})
-gameid: {self.gameid}\n \n"""
-            else:
-                res += f'Turn: {self.currentPiece}\ngameid: {self.gameid}\n \n'
+            res += f'Turn: {self.currentPiece}\n'
+        res += f'gameid: {self.gameid}\n\n'
         for x in range(1,8):
             res += f'{x}\uFE0F\u20E3'
         res +='\n'
@@ -114,14 +94,10 @@ gameid: {self.gameid}\n \n"""
             for j in range(width):
                 res += self.cols[j][i]
             res += '\n'
+        res += self.state
         return res
 
-    async def clear(self):
-        super().clear()
-        try:
-            await board.delete()
-        except:
-            pass
+    def stop(self):
         self.board = None
         f = open('games.txt','a')
         try:
@@ -131,14 +107,50 @@ gameid: {self.gameid}\n \n"""
         f.close()
         self.p1 = None
         self.p2 = None
-        f.close()
 
     def place(self, col):
         success = super().place(self.cols[col])
         if success:
             self.game += str(col)
+        self.updatePlayer()
+        self.updateState()
         return success
 
+    def updatePlayer(self):
+        self.currentPlayer = self.p1 if (self.currentPiece == red) else self.p2
+    
+    def updateState(self):
+        if self.checkwin(red):
+            self.state = 'Red has won!'
+        elif self.checkwin(yellow):
+            self.state = 'Yellow has won!'
+        elif self.checkdraw():
+            self.state = 'The game has drawn!'
+    
+    async def say(self, msg):
+        await self.board.channel.send(msg)
+    
+    async def handle(self, col, player):
+        if self.p1 == None:
+            self.p1 = player
+            await self.say(f"Player 1 has joined: {player.name} ({red})")
+        elif self.p2 == None:
+            self.p2 = player
+            await self.say(f"Player 2 has joined: {player.name} ({yellow})")
+
+        self.updatePlayer()
+        if (player == self.currentPlayer):
+            if not self.place(col):
+                await self.say(f"Invalid move! Turn is still {self.currentPlayer.name} ({self.currentPiece})")
+        elif (player == self.p1 or player == self.p2):
+            await self.say("It is not your turn!")
+        else:    
+            await self.say("You are not in this game!")
+        
+        await self.board.edit(content = self.getboard())
+        if bool(self.state):
+            self.stop()
+        
     async def resend(self):
         tb = await self.board.channel.send(self.getboard())
         try:
