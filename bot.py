@@ -102,18 +102,24 @@ async def replay(ctx, *args):
                     for j in range(len(line)):
                         if line[j]==' ':
                             spaces.append(j)
-                    replay.p1 = line[spaces[0]+1:spaces[1]]
-                    replay.p2 = line[spaces[1]+1:spaces[2]]
-                    moves = line[spaces[2]+1:len(line)-1]
+                    if len(spaces) == 3:
+                        replay.p1 = c4.fakeplayer(line[spaces[0]+1:spaces[1]])
+                        replay.p2 = c4.fakeplayer(line[spaces[1]+1:spaces[2]])
+                        moves = line[spaces[2]+1:len(line)-1]
 
-                    replay.board = await ctx.send(replay.getboard())
+                        
+                        replay.updatePlayer()
+                        replay.board = await ctx.send(replay.getboard())
                     
-                    for x in range(len(moves)):
-                        await asyncio.sleep(2)
-                        replay.place(int(moves[x]))
-                        await replay.board.edit(content=replay.getboard())
+                        for x in range(len(moves)):
+                            await asyncio.sleep(2)
+                            replay.place(int(moves[x]))
+                            await replay.board.edit(content=replay.getboard())
+                    else:
+                        await ctx.send(f'Game {getid} was aborted or corrupted')
                     f.close()
                     return
+                
                 else:
                     break
     await ctx.send('no game found')

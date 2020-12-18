@@ -14,7 +14,6 @@ class c4game:
         for i in range(height-1,-1,-1):
             if col[i]==blank:
                 col[i]=self.currentPiece
-                checkwin(self.currentPiece)
                 self.togglePiece()
                 return True
         return False
@@ -92,11 +91,11 @@ class discordgame(c4game):
 
     def getboard(self):
         res = ''
-        res += f'gameid: {self.gameid}\n\n'
+        res += f'gameid: {self.gameid}\n'
         try:
-            res += f'Turn: {self.currentPlayer.name} ({self.currentPiece})\n'
+            res += f'Turn: {self.currentPlayer.name} ({self.currentPiece})\n\n'
         except:
-            res += f'Turn: {self.currentPiece}\n'
+            res += f'Turn: {self.currentPiece}\n\n'
         for x in range(1,8):
             res += f'{x}\uFE0F\u20E3'
         res +='\n'
@@ -131,7 +130,6 @@ class discordgame(c4game):
                 elif self.checkdraw():
                     self.state = 'The game has drawn!'
                     
-                # col and i are 0 based
                 self.game += str(col)
                 self.togglePiece()
                 self.updatePlayer()
@@ -177,7 +175,7 @@ class discordgame(c4game):
         await self.board.add_reaction('\u23F9\uFE0F')
         await self.board.add_reaction('\U0001F501')
         
+class fakeplayer:
+    def __init__(self, name):
+        self.name = name
     
-    
-
-
