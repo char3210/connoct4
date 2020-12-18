@@ -14,6 +14,7 @@ class c4game:
         for i in range(height-1,-1,-1):
             if col[i]==blank:
                 col[i]=self.currentPiece
+                checkwin(self.currentPiece)
                 self.togglePiece()
                 return True
         return False
@@ -36,31 +37,40 @@ class c4game:
         return res
 
 
-    def checkwin(self, char):
+    def checkwin(self, char, x, y):
         #check column win
-        for i in range(width):
-            col=self.cols[i]
-            for j in range(height-3):
-                if (col[j]==char and col[j+1]==char and
-                    col[j+2]==char and col[j+3]==char):
-                    return True
+        col=self.cols[x]
+        for j in range(height-3):
+            if (col[j+0]==char and
+                col[j+1]==char and
+                col[j+2]==char and
+                col[j+3]==char    ):
+                return True
         
         #check row win
-        for i in range(height):
-            for j in range(width-3):
-                if (self.cols[j][i]==char and self.cols[j+1][i]==char and
-                    self.cols[j+2][i]==char and self.cols[j+3][i]==char) :
-                    return True
-            
+        for j in range(width-3):
+            if (self.cols[j+0][y]==char and
+                self.cols[j+1][y]==char and
+                self.cols[j+2][y]==char and
+                self.cols[j+3][y]==char    ):
+                return True
 
-        #check diagonal win
-        for i in range(height-3):
-            for j in range(width-3):
-                if ( (self.cols[j][i]==char and self.cols[j+1][i+1]==char and
-                      self.cols[j+2][i+2]==char and self.cols[j+3][i+3]==char) or
-                     (self.cols[-j-1][i]==char and self.cols[-j-2][i+1]==char and
-                      self.cols[-j-3][i+2]==char and self.cols[-j-4][i+3]==char) ):
+        for i in range(-3,1):
+            if (x+i in range(width) and x+i+3 in range(width) and
+                y+i in range(height) and y+i+3 in range(height)  ):
+                if (self.cols[x+i][y+i]==char and
+                    self.cols[x+i+1][y+i+1]==char and
+                    self.cols[x+i+2][y+i+2]==char and
+                    self.cols[x+i+3][y+i+3]==char):
                     return True
+            if (x-i in range(width) and x-i-3 in range(width) and
+                y+i in range(height) and y+i+3 in range(height)  ):
+                if (self.cols[x-i][y+i]==char and
+                    self.cols[x-i-1][y+i+1]==char and
+                    self.cols[x-i-2][y+i+2]==char and
+                    self.cols[x-i-3][y+i+3]==char    ):
+                    return True
+        return False
 
     def checkdraw(self):
         #check draw
@@ -82,11 +92,11 @@ class discordgame(c4game):
 
     def getboard(self):
         res = ''
+        res += f'gameid: {self.gameid}\n\n'
         try:
             res += f'Turn: {self.currentPlayer.name} ({self.currentPiece})\n'
         except:
             res += f'Turn: {self.currentPiece}\n'
-        res += f'gameid: {self.gameid}\n\n'
         for x in range(1,8):
             res += f'{x}\uFE0F\u20E3'
         res +='\n'
@@ -109,23 +119,27 @@ class discordgame(c4game):
         self.p2 = None
 
     def place(self, col):
-        success = super().place(self.cols[col])
-        if success:
-            self.game += str(col)
-        self.updatePlayer()
-        self.updateState()
-        return success
+        placed = self.cols[col]
+        for i in range(height-1,-1,-1):
+            if placed[i]==blank:
+                placed[i]=self.currentPiece
+                if self.checkwin(self.currentPiece, col, i):
+                    if self.currentPiece == red:
+                        self.state = 'Red has won!'
+                    else:
+                        self.state = 'Yellow has won!'
+                elif self.checkdraw():
+                    self.state = 'The game has drawn!'
+                    
+                # col and i are 0 based
+                self.game += str(col)
+                self.togglePiece()
+                self.updatePlayer()
+                return True
+        return False
 
     def updatePlayer(self):
         self.currentPlayer = self.p1 if (self.currentPiece == red) else self.p2
-    
-    def updateState(self):
-        if self.checkwin(red):
-            self.state = 'Red has won!'
-        elif self.checkwin(yellow):
-            self.state = 'Yellow has won!'
-        elif self.checkdraw():
-            self.state = 'The game has drawn!'
     
     async def say(self, msg):
         await self.board.channel.send(msg)

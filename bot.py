@@ -57,8 +57,10 @@ async def on_reaction_add(reaction, user):
         else:
             return
     
-    
-    await reaction.remove(user)
+    try:
+        await reaction.remove(user)
+    except:
+        pass
 
 @bot.command(name='start',
              brief='Starts a new game',
