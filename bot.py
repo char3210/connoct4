@@ -50,8 +50,10 @@ async def on_reaction_add(reaction, user):
         await game.handle(chosen, user)
     except:
         if reaction.emoji == '⏹️':
-            game.stop()
-            await reaction.message.channel.send('game has been stopped')
+            game.state = 'Game has been aborted'
+            await game.board.edit(content = game.getboard())
+            game.stop() #turn this into forfeits maybe
+            #await reaction.message.channel.send('game has been stopped')
         elif reaction.emoji == '🔁':
             await game.resend()
         else:
